@@ -5,20 +5,20 @@
 }
 .list-btn{
   text-transform: capitalize;
-  background-color: #cef2ee;
-  color: #03695b;
+  background-color: #f6f7f3;
+  color: black;
   border: 1px solid #343a40;
   font-family: 'Titan One', sans-serif;
 
 }
 .list-group-item{
-  background-color: #f7f7f7; 
+  background-color: #f12222; 
 }
 .navbar-brand{
   font-size: 36px;
 }
 .navbar{
-  background-color: #03695b;
+  background-color: #f12222;
   padding: 8px 24px;
 }
 .form-text{
@@ -30,8 +30,8 @@
 .type-content{
   margin: 4px 4px;
   border: none;
-  background-color:#cef2ee ;
-  color: #03695b;
+  background-color:#f12222 ;
+  color: black;
   border-radius: 4px;
   padding: 4px 8px;
   text-align: center; 
