@@ -1,65 +1,86 @@
-let pokemonRepository = (function () {
+let pokemonRepository = (function (){
+  let i = 0;
   let pokemonList = [];
-  let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
+  let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=40';
 
+  // Add a Pokemon Item to a list      
   function add(pokemon) {
-    if (
-      typeof pokemon === "object" &&
-      "name" in pokemon
+    if (typeof pokemon === 'object' &&
+    'name' in pokemon &&
+    'detailsUrl' in pokemon
     ) {
-      pokemonList.push(pokemon);
+        pokemonList.push(pokemon);
     } else {
-      console.log("pokemon is not correct");
+        console.log('Pokemon is not correct')
     }
   }
+
+  // Return an Array of pokemons
   function getAll() {
     return pokemonList;
-  }
+  } 
+  
+  // Function to filter pokemons by name
+  function filterByName(name) {
+    let containerElement = document.querySelector('.row');
+    let pokemonNames = pokemonList.map(item => item.name);
 
-  // Create Pokemon Buttons List 
-  function addListItem(pokemon) {
-    let pokemonList = document.querySelector(".pokemon-list");
-    let listpokemon = document.createElement("li");
-    let button = document.createElement("button");
-    button.innerText = pokemon.name;
-    button.classList.add("button-class");
-    listpokemon.appendChild(button);
-    pokemonList.appendChild(listpokemon);
-    button.addEventListener("click", function(event) {
-      showDetails(pokemon);
+    pokemonNames.forEach((element) => {
+        let containerChild = document.querySelector(`[id=${element}]`);
+        if (containerChild) {
+         if (!element.match(name)) {
+           containerElement.removeChild(containerChild);
+         }
+        }
     });
+}
+
+  // Create Pokemon Buttons List  
+  function addListItem(pokemon) {
+    let pokemonAddList = document.querySelector('.row');
+    let divElement = document.createElement('div');
+    pokemonAddList.appendChild(divElement);
+    divElement.classList.add('list-group-item','col-12','col-sm-6','col-md-4','col-lg-4');
+    divElement.id = pokemon.name;
+
+    let button = document.createElement('button');
+    button.innerText = pokemon.name;
+    button.setAttribute('data-id', i++);
+    button.setAttribute('data-toggle', 'modal');
+    button.setAttribute('data-target', '#exampleModal');  
+    divElement.appendChild(button);
+    button.classList.add('btn','btn-lg','btn-block', 'list-btn');
   }
 
   //  Function to fetch the list of Pokemon Items from API
   function loadList() {
     return fetch(apiUrl).then(function (response) {
-      return response.json();
+        return response.json();
     }).then(function (json) {
-      json.results.forEach(function (item) {
-        let pokemon = {
-          name: item.name,
-          detailsUrl: item.url
-        };
-        add(pokemon);
-        console.log(pokemon);
-      });
+        json.results.forEach(function (item) {
+            let pokemon = {
+                name: item.name,
+                detailsUrl: item.url
+            };
+            add(pokemon);
+        });
     }).catch(function (e) {
-      console.error(e);
+        console.error(e);
     })
   }
 
-    // Function to fetch the Pokemon Details from Pokemon Items
+  // Function to fetch the Pokemon Details from Pokemon Items
   function loadDetails(item) {
     let url = item.detailsUrl;
     return fetch(url).then(function (response) {
-      return response.json();
+        return response.json();
     }).then(function (details) {
-      // Now we add the details to the item
-      item.imageUrl = details.sprites.front_default;
-      item.height = details.height;
-      item.types = details.types;
+        // Fetche Pokemon Item Details
+        item.imgUrl = details.sprites.front_default;
+        item.height = details.height;
+        item.types = details.types;
     }).catch(function (e) {
-      console.error(e);
+        console.error(e);
     });
   }
 
@@ -108,20 +129,20 @@ let pokemonRepository = (function () {
     let inputText = $('#searchItem').val();
     filterByName(inputText);
   });
-  
-  return {
-    add: add,
+
+  return{
+    add:add,
     getAll: getAll,
     addListItem: addListItem,
+    filterByName:filterByName,
     loadList: loadList,
-    loadDetails: loadDetails,
-    showDetails: showDetails
+    loadDetails: loadDetails
   };
-})();
+  })();
 
-// Print the list of Pokemon Names and open Modal
-pokemonRepository.loadList().then(function () {
-  pokemonRepository.getAll().forEach(function (pokemon) {
-    pokemonRepository.addListItem(pokemon);
+  // Print the list of Pokemon Names and open Modal
+  pokemonRepository.loadList().then(function () {
+    pokemonRepository.getAll().forEach(function (pokemon) {
+      pokemonRepository.addListItem(pokemon);
+    });
   });
-});
